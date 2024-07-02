@@ -35,10 +35,12 @@ const LoginPage = () => {
         password,
       });
       const { access } = response.data;
+      console.log('response', response)
       if (access) {
         const credentials = { token: access, username };
         dispatch(setCredentials(credentials))
         localStorage.setItem('user', JSON.stringify({ token: access, username }))
+        console.log('localStorage', localStorage)
         auth.loggedIn = true;
         return navigate('/');
       }
@@ -102,7 +104,7 @@ const LoginPage = () => {
               <div className="text-center">
                 <span>Нет аккаунта? </span>
                   
-                  <a onClick={() => navigate('/signup')}>Регистрация1</a>
+                  <a onClick={() => navigate('/signup')}>Регистрация</a>
               </div>
             </div>
           </div>

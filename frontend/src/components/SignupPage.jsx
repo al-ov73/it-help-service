@@ -30,7 +30,6 @@ const SignupPage = () => {
 
 
   const handleSubmit = (values, actions) => async () => {
-    console.log('values', values)
     const username = values.username;
     const password = values.password;
     const role = 'EM';
@@ -40,8 +39,15 @@ const SignupPage = () => {
         password,
         role,
       });
-      if (response.status === 201) {
-        return navigate('/login');
+      const { access } = response.data;
+      console.log('response', response)
+      if (access) {
+        const credentials = { token: access, username };
+        dispatch(setCredentials(credentials))
+        localStorage.setItem('user', JSON.stringify({ token: access, username }))
+        console.log('localStorage', localStorage)
+        auth.loggedIn = true;
+        return navigate('/');
       }
     } catch (e) {
       console.log('e', e);
