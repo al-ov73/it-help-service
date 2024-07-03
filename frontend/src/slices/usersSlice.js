@@ -10,14 +10,13 @@ const slice = createSlice({
   initialState,
   reducers: {
 
-    setCredentials: (state, {payload: { username, token }}) => {
-      console
-      state.username = username;
-      state.token = token;
+    setCredentials: (state, {payload}) => {
+      // state.username = username;
+      state.token = payload;
     },
 
     removeCredentials: (state) => {
-      state.username = null;
+      // state.username = null;
       state.token = null;
     },
   },

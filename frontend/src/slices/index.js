@@ -3,6 +3,6 @@ import usersReducer from './usersSlice.js';
 
 export default configureStore({
   reducer: {
-    users: usersReducer,
+    // users: usersReducer,
   },
 });

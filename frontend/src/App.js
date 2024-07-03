@@ -32,7 +32,6 @@ const PrivateRoute = ({ children }) => {
   const auth = useAuth();
   const location = useLocation();
   if (localStorage.getItem('user')) {
-    const { username, token } = JSON.parse(localStorage.getItem('user'))
     auth.loggedIn = true;
   }
   return (

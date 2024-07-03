@@ -8,7 +8,6 @@ import * as Yup from 'yup';
 import axios from 'axios';
 
 import routes from '../routes/routes.js';
-import { setCredentials } from '../slices/usersSlice.js';
 import useAuth from '../hooks/index.js';
 import IndexNavbar from './Navbar.jsx';
 
@@ -39,13 +38,10 @@ const SignupPage = () => {
         password,
         role,
       });
-      const { access } = response.data;
-      console.log('response', response)
-      if (access) {
-        const credentials = { token: access, username };
-        dispatch(setCredentials(credentials))
-        localStorage.setItem('user', JSON.stringify({ token: access, username }))
-        console.log('localStorage', localStorage)
+      const tokens = response.data;
+      if (tokens.access) {
+        const credentials = { username, tokens }
+        localStorage.setItem('user', JSON.stringify(credentials))
         auth.loggedIn = true;
         return navigate('/');
       }
