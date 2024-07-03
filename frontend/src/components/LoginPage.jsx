@@ -29,7 +29,7 @@ const LoginPage = () => {
     const username = values.username;
     const password = values.password;
     try {
-      const response = await axios.post(routes.loginPath(), {
+      const response = await axios.post(routes.loginPath, {
         username,
         password,
       });

@@ -33,7 +33,7 @@ const SignupPage = () => {
     const password = values.password;
     const role = 'EM';
     try {
-      const response = await axios.post(routes.signupPath(), {
+      const response = await axios.post(routes.signupPath, {
         username,
         password,
         role,
