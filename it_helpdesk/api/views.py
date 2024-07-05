@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.utils.dateparse import parse_datetime
 from rest_framework import generics, viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -16,7 +17,16 @@ class TicketsView(generics.CreateAPIView):
 
 class UserCreateView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
-        serializer = UserSerializer(data=request.data)
+        print('request.data', request.data)
+        user = {
+            'first_name': request.data['first_name'],
+            'username': request.data['username'],
+            'password': request.data['password'],
+            'role': request.data['role'],
+            # 'date_birth': parse_datetime(request.data['date_birth']),
+        }
+        print('user', user)
+        serializer = UserSerializer(data=user)
         if serializer.is_valid():
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
@@ -24,6 +34,7 @@ class UserCreateView(generics.CreateAPIView):
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
             }, status=status.HTTP_201_CREATED)
+        return Response({'Некорректные данные': request.data}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class UsersView(generics.ListAPIView):
     queryset = User.objects.all()
