@@ -9,6 +9,8 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 import Container from "react-bootstrap/esm/Container";
 import { jwtDecode } from "jwt-decode";
+import SpinnerEl from './Spinner.jsx';
+
 
 const TicketCreateForm = () => {
   const [isLoading, setLoading] = useState(false);
@@ -113,7 +115,7 @@ const TicketCreateForm = () => {
       <Button type="submit"
               disabled={isLoading}
               >
-        Отправить тикет
+        {isLoading ? <SpinnerEl/> : 'Отправить тикет'}
       </Button>
       </Container>
     </Form>

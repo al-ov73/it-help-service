@@ -10,7 +10,7 @@ import axios from 'axios';
 import routes from '../routes/routes.js';
 import useAuth from '../hooks/index.js';
 import IndexNavbar from './Navbar.jsx';
-
+import SpinnerEl from './Spinner.jsx';
 
 const LoginPage = () => {
   const [isLoading, setLoading] = useState(false);
@@ -96,7 +96,9 @@ const LoginPage = () => {
                     <Form.Label htmlFor='password' >Пароль</Form.Label>
                     <ErrorMessage component="div" name="password" />
                     </Form.Group>
-                    <Button type="submit" disabled={isLoading}>Войти</Button>
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading ? <SpinnerEl/> : 'Войти'}
+                    </Button>
                   </Form>
                   </FormikProvider>
               </div>

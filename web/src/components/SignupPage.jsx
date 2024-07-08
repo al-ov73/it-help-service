@@ -54,7 +54,6 @@ const SignupPage = () => {
         role: values.role,
         date_birth: new Date(values.date_birth).toISOString(),
       });
-      console.log('response', response)
       const tokens = response.data;
       if (tokens.access) {
         const username = values.username;
