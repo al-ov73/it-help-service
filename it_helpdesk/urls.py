@@ -11,5 +11,4 @@ urlpatterns = [
          name='token_verify'),
     path('admin/', admin.site.urls),
     path('api/v1/', include('it_helpdesk.api.router')),
-    path('', include('frontend.urls')),
 ]

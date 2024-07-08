@@ -10,7 +10,17 @@ from it_helpdesk.tickets.models import Ticket
 from it_helpdesk.users.models import User
 
 
-class TicketsView(generics.CreateAPIView):
+class TicketsCreateView(generics.CreateAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    permission_classes = (IsAuthenticated,)
+
+class TicketsListView(generics.ListAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    permission_classes = (IsAuthenticated,)
+
+class TicketView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     permission_classes = (IsAuthenticated,)
