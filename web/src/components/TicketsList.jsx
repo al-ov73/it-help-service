@@ -4,9 +4,13 @@ import routes from '../routes/routes.js';
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import useAuth from '../hooks/index.js';
+import { useNavigate } from "react-router-dom";
 
 const TicketsList = () => {
+  const auth = useAuth();
   const [tickets, setTickets] = useState([]);  
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getTickets = async () => {
@@ -16,7 +20,15 @@ const TicketsList = () => {
           Authorization: `Bearer ${tokens.access}`,
         },
       }).then((response) => setTickets(response.data))
-        .then(() => setTimeout(getTickets, 10000))
+      .catch((e) => {
+        console.log('ticket list error', e);
+        if (e.response.statusText === 'Unauthorized') {
+          console.log('Unauthorized');
+          auth.logOut();
+          return navigate('/login');
+        }
+      })
+        // .then(() => setTimeout(getTickets, 10000))
     }
 
     getTickets()

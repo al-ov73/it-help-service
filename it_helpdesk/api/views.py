@@ -15,6 +15,29 @@ class TicketsCreateView(generics.CreateAPIView):
     serializer_class = TicketSerializer
     permission_classes = (IsAuthenticated,)
 
+    def perform_create(self, serializer):
+        author = get_object_or_404(Ticket, id=self.request.data.get('ticket_id'))
+        return serializer.save(author=author)
+
+    # def post(self, request, *args, **kwargs):
+    #     ticket = {
+    #         'title': request.data['title'],
+    #         'description': request.data['description'],
+    #         'author': request.data['author'],
+    #         'priority': request.data['priority'],
+    #         'type': request.data['type'],
+    #     }
+    #     serializer = TicketSerializer(data=ticket)
+    #     if serializer.is_valid():
+    #         ticket = serializer.save()
+    #         print('ticket---', type(ticket.data))
+    #         return Response({
+    #             'ticket': ticket,
+    #         }, status=status.HTTP_201_CREATED)
+    #
+    #     return Response({'Некорректные данные': serializer.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class TicketsListView(generics.ListAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
@@ -30,10 +53,11 @@ class UserCreateView(generics.CreateAPIView):
         print('request.data', request.data)
         user = {
             'first_name': request.data['first_name'],
+            'last_name': request.data['last_name'],
             'username': request.data['username'],
             'password': request.data['password'],
             'role': request.data['role'],
-            # 'date_birth': parse_datetime(request.data['date_birth']),
+            'date_birth': parse_datetime(request.data['date_birth']),
         }
         print('user', user)
         serializer = UserSerializer(data=user)
@@ -44,7 +68,8 @@ class UserCreateView(generics.CreateAPIView):
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
             }, status=status.HTTP_201_CREATED)
-        return Response({'Некорректные данные': request.data}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response({'Некорректные данные': serializer.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class UsersView(generics.ListAPIView):
     queryset = User.objects.all()

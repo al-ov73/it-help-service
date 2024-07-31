@@ -27,33 +27,35 @@ const SignupPage = () => {
     first_name: Yup.string()
     .min(3, 'от 3 о 20 символов')
     .max(20, 'от 3 о 20 символов')
-    .required('requied field'),
+    .required('required field'),
     last_name: Yup.string()
     .min(3, 'от 3 о 20 символов')
     .max(20, 'от 3 о 20 символов')
-    .required('requied field'),
+    .required('required field'),
     username: Yup.string()
       .min(3, 'от 3 о 20 символов')
       .max(20, 'от 3 о 20 символов')
-      .required('requied field'),
-    password: Yup.string().min(6, 'больше 6 символов'),
+      .required('required field'),
+    password: Yup.string().min(2, 'больше 2 символов'),
     passwordConfirmation: Yup.string()
       .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать'),
-    // date_birth: Yup.date().required(),
+    date_birth: Yup.date().required(),
   });
 
 
   const handleSubmit = (values, actions) => async () => {
     setLoading(true)
+    console.log('values', values)
     try {
       const response = await axios.post(routes.signupPath, {
         first_name: values.first_name,
-        second_name: values.second_name,
+        last_name: values.last_name,
         username: values.username,
         password: values.password,
         role: values.role,
         date_birth: new Date(values.date_birth).toISOString(),
       });
+      console.log('response', response.data)
       const tokens = response.data;
       if (tokens.access) {
         const username = values.username;

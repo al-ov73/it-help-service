@@ -39,8 +39,13 @@ const TicketCreateForm = () => {
       }
       axios.post(routes.ticketCreatePath, requestBody, requestHeaders)
         .then(() => setLoading(false))
-        .then(() => toast.success('Тикет отправлен!'));
+        .then(() => toast.success('Тикет отправлен!'))
+        .catch((e) => {
+          setLoading(false)
+          console.log('TicketCreateForm error', e);
+        })
     } catch (e) {
+      setLoading(false)
       console.log('TicketCreateForm error', e);
     }
   };
