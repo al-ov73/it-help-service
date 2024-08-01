@@ -67,14 +67,11 @@ const LoginPage = () => {
     <div className='d-flex flex-column h-100'>
       <div className='container-fluid h-100'>
         <div className='row justify-content-center align-content-center h-100'>
-          <div className='col-12 col-md-8 col-xxl-6'>
+          <div className='col-3 col-md-4'>
             <div className='card shadow-sm'>
               <div className='card-body row p-5'>
-                <div className='col-12 col-md-6 d-flex align-items-center justify-content-center'>
-                  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-                </div>
                 <FormikProvider value={formik}>
-                  <Form onSubmit={formik.handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
+                  <Form onSubmit={formik.handleSubmit} className="col">
                     <h1 className="text-center mb-4">Логин</h1>
                     <Form.Group className="form-floating mb-3">
                     <Form.Control
@@ -106,8 +103,7 @@ const LoginPage = () => {
             <div className="card-footer p-4">
               <div className="text-center">
                 <span>Нет аккаунта? </span>
-                  
-                  <a onClick={() => navigate('/signup')}>Регистрация</a>
+                  <a href="/signup">Регистрация</a>
               </div>
             </div>
           </div>

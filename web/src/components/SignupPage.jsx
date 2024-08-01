@@ -193,7 +193,7 @@ const SignupPage = () => {
           </div>
             <div className="card-footer p-4">
               <div className="text-center">
-                <a onClick={() => navigate('/login')}>Залогиниться</a>
+                <a href="/login">Залогиниться</a>
               </div>
             </div>
           </div>

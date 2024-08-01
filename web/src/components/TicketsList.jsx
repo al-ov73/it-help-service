@@ -59,15 +59,15 @@ const TicketsList = () => {
           <tbody>
           {tickets.map((ticket) => {
             return <tr key={ticket.id}>
-                <td>{ticket.id}</td>
-                <td>{ticket.title}</td>
-                <td>{ticket.author.username}</td>
-                <td>{ticket.assigned}</td>
-                <td>{ticket.created_at}</td>
-                <td>{ticket.closed_at}</td>
-                <td>{ticket.priority}</td>
-                <td>{ticket.type}</td>
-              </tr>
+                    <td>{ticket.id}</td>
+                    <td>{ticket.title}</td>
+                    <td>{ticket.author.username}</td>
+                    <td>{ticket.assigned && ticket.assigned.username}</td>
+                    <td>{ticket.created_at}</td>
+                    <td>{ticket.closed_at}</td>
+                    <td>{ticket.priority}</td>
+                    <td>{ticket.type}</td>
+                  </tr>
           })}
           </tbody>
         </Table>       
