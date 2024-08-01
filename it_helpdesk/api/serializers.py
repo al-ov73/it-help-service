@@ -23,15 +23,25 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class TicketSerializer(serializers.ModelSerializer):
-    # author = UserSerializer(read_only=True)
+class AuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+        ]
 
+class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = '__all__'
 
-    def create(self, validated_data):
-        print('check', validated_data)
-        ticket = Ticket.objects.create(**validated_data)
-        ticket.save()
-        return Response(status=status.HTTP_201_CREATED, data=ticket)
+
+class TicketListSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer(read_only=True)
+
+    class Meta:
+        model = Ticket
+        depth = 1
+        fields = '__all__'
