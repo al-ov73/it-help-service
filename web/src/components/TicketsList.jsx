@@ -6,11 +6,17 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import useAuth from '../hooks/index.js';
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const TicketsList = () => {
   const auth = useAuth();
-  const [tickets, setTickets] = useState([]);  
+  const [tickets, setTickets] = useState([]);
+  const [currentUser, setCurrentUser] = useState({});
   const navigate = useNavigate();
+
+  const { tokens } = JSON.parse(localStorage.getItem('user'))
+  const decoded = jwtDecode(tokens.access);
+  const currentUserId = decoded.user_id;
 
   useEffect(() => {
     const getTickets = async () => {
@@ -33,6 +39,16 @@ const TicketsList = () => {
 
     getTickets()
   }, []);
+
+  useEffect(() => {
+    axios.get(`${routes.getUsersPath}/${currentUserId}`, {
+      headers: {
+        Authorization: `Bearer ${tokens.access}`,
+      },
+    }.then((response) => console.log(response.data)).catch((e) => console.log('error', e)))
+  }, [])
+
+  console.log('currentUser', currentUser)
 
   if (tickets.length === 0) {
     return 'Тикетов пока нет';
