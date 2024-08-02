@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import useAuth from '../hooks/index.js';
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import config from '../config/config.js';
 
 const TicketsList = () => {
   const auth = useAuth();
@@ -36,7 +37,6 @@ const TicketsList = () => {
       })
         // .then(() => setTimeout(getTickets, 10000))
     }
-
     getTickets()
   }, []);
 
@@ -45,15 +45,28 @@ const TicketsList = () => {
       headers: {
         Authorization: `Bearer ${tokens.access}`,
       },
-    }.then((response) => console.log(response.data)).catch((e) => console.log('error', e)))
+    }).then((response) => setCurrentUser(response.data))
+    .catch((e) => console.log('error', e))
   }, [])
-
-  console.log('currentUser', currentUser)
 
   if (tickets.length === 0) {
     return 'Тикетов пока нет';
   }
+
   console.log('tickets', tickets)
+
+  const assignHandler = (ticket) => {
+    console.log('ticket before', ticket)
+    ticket.author = ticket.author.id;
+    ticket.assigned = currentUserId;
+    console.log('ticket after', ticket)
+    axios.put(`${routes.ticketPath}/${ticket.id}/`, ticket, {
+      headers: {
+        Authorization: `Bearer ${tokens.access}`,
+      }
+    })
+  }
+
   return <>
     <Container>
       <Row><h2 className="text-center mb-4">Тикеты</h2></Row>
@@ -74,11 +87,14 @@ const TicketsList = () => {
           </thead>
           <tbody>
           {tickets.map((ticket) => {
+            const assigned = config.IT_ROLES.includes(currentUser.role) && !ticket.assigned ? 
+                              <button onClick={() => assignHandler(ticket)}>Забираю</button> : 
+                              ticket.assigned && ticket.assigned.username
             return <tr key={ticket.id}>
                     <td>{ticket.id}</td>
                     <td>{ticket.title}</td>
                     <td>{ticket.author.username}</td>
-                    <td>{ticket.assigned && ticket.assigned.username}</td>
+                    <td>{assigned}</td>
                     <td>{ticket.created_at}</td>
                     <td>{ticket.closed_at}</td>
                     <td>{ticket.priority}</td>

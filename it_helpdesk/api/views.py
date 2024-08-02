@@ -34,9 +34,9 @@ class TicketsListView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         if self.request.user.role in IT_ROLES:
-            return self.queryset.all()
+            return self.queryset.all().order_by('id')
         owner_queryset = self.queryset.filter(author=self.request.user)
-        return owner_queryset
+        return owner_queryset.order_by('id')
 
 
 class TicketView(generics.RetrieveUpdateDestroyAPIView):
