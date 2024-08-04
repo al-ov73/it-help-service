@@ -37,7 +37,7 @@ const TicketCreateForm = () => {
           Authorization: `Bearer ${tokens.access}`,
         }
       }
-      axios.post(routes.ticketCreatePath, requestBody, requestHeaders)
+      axios.post(routes.ticketsPath, requestBody, requestHeaders)
         .then((response) => console.log(response.data))
         .then(() => setLoading(false))
         .then(() => toast.success('Тикет отправлен!'))

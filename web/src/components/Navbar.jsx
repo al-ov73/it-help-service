@@ -20,13 +20,13 @@ const IndexNavbar = () => {
   }
   
   return <>
-    <Navbar className="bg-body-tertiary justify-content-end">
+    <Navbar className="justify-content-end">
     { username ? 
       <>
         <Navbar.Text>Вы вошли как { username }</Navbar.Text>
         <Button variant="outline-secondary" onClick={handleLogout}>Logout</Button> 
       </> :
-        <Navbar.Text>Загрузка ...</Navbar.Text> } 
+        <Navbar.Text>Вы пока не вошли в систему</Navbar.Text> } 
     </Navbar>
   </>
 }

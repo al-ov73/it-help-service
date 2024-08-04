@@ -25,8 +25,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'it_helpdesk',
-    'it_helpdesk.tickets',
-    'it_helpdesk.users',
 ]
 
 REST_FRAMEWORK = {
@@ -75,7 +73,8 @@ DATABASES = {
     )
 }
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'it_helpdesk.User'
+
 AUTH_PASSWORD_VALIDATORS = [
     # {
     #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

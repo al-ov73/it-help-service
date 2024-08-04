@@ -1,8 +1,6 @@
-from rest_framework import serializers, status
-from rest_framework.response import Response
+from rest_framework import serializers
 
-from it_helpdesk.tickets.models import Ticket
-from it_helpdesk.users.models import User
+from it_helpdesk.models import User, Ticket
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -33,16 +31,18 @@ class AuthorSerializer(serializers.ModelSerializer):
             'last_name',
         ]
 
+
+# class TicketSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Ticket
+#         fields = '__all__'
+
+
 class TicketSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Ticket
-        fields = '__all__'
-
-
-class TicketListSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
+    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 
     class Meta:
         model = Ticket
-        depth = 1
+        # depth = 1
         fields = '__all__'

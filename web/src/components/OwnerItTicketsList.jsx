@@ -8,14 +8,11 @@ import useAuth from '../hooks/index.js';
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import config from '../config/config.js';
-import TicketModal from './TicketModal.jsx';
 
-const TicketsList = () => {
+const OwnerItTicketsList = () => {
   const auth = useAuth();
   const [tickets, setTickets] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
-  const [showModal, setShowModal] = useState(false);
-  const [showTicket, setShowTicket] = useState({});
   const navigate = useNavigate();
 
   const { tokens } = JSON.parse(localStorage.getItem('user'))
@@ -56,67 +53,61 @@ const TicketsList = () => {
     return 'Тикетов пока нет';
   }
 
-//   console.log('tickets', tickets)
+  console.log('tickets', tickets)
 
   const assignHandler = (ticket) => {
+    console.log('ticket before', ticket)
     ticket.author = ticket.author.id;
     ticket.assigned = currentUserId;
+    console.log('ticket after', ticket)
     axios.put(`${routes.ticketsPath}/${ticket.id}/`, ticket, {
       headers: {
         Authorization: `Bearer ${tokens.access}`,
       }
     })
   }
-  const showModalHandler = (ticket) => {
-    setShowTicket(ticket)
-    setShowModal(true);
-  }
 
   return <>
-    <Container>
-      <Row><h2 className="text-center mb-4">Тикеты</h2></Row>
+      <Container>
+      <Row><h2 className="text-center mb-4">Мои тикеты</h2></Row>
       <Row >
         <Table striped bordered hover className="text-center">
           <thead>
             <tr>
               <th>ID</th>
               <th>Заголовок</th>
+              <th>Описание</th>
               <th>Пользователь</th>
-              <th>Специалист</th>
               <th>Создан</th>
               <th>Закрыт</th>
               <th>Приоритет</th>
               <th>Тип</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
-          {tickets.map((ticket) => {
-            const takeButton = config.IT_ROLES.includes(currentUser.role) && !ticket.assigned ? 
-                              <button onClick={() => assignHandler(ticket)}>Забираю</button> : 
-                              ''
-            return <>
-              <tr key={ticket.id}>
-                <td>{ticket.id}</td>
-                <td><button onClick={() => showModalHandler(ticket)}>{ticket.title}</button></td>
-                <td>{ticket.author.username}</td>
-                <td>{ticket.assigned ? ticket.assigned.username : '-'}</td>
-                <td>{ticket.created_at}</td>
-                <td>{ticket.closed_at}</td>
-                <td>{ticket.priority}</td>
-                <td>{ticket.type}</td>
-                <td>{takeButton}</td>
-              </tr>
-              
-            </>
-          })}
+          {tickets
+            .filter((ticket) => ticket.assigned && ticket.assigned.username === currentUser.username)
+            .map((ticket) => {
+              const closeButton = config.IT_ROLES.includes(currentUser.role) && !ticket.assigned ? 
+              <button onClick={() => assignHandler(ticket)}>Закрыть</button> : 
+              ''
+              return <tr key={ticket.id}>
+                      <td>{ticket.id}</td>
+                      <td>{ticket.title}</td>
+                      <td>{ticket.description}</td>
+                      <td>{ticket.author.username}</td>
+                      <td>{ticket.created_at}</td>
+                      <td>{ticket.closed_at}</td>
+                      <td>{ticket.priority}</td>
+                      <td>{ticket.type}</td>
+                    </tr>
+            })}
           </tbody>
         </Table>       
       </Row>
     </Container>
-    {showModal && <TicketModal ticket={showTicket} show={showModal} onHide={() => setShowModal(false)}/>}
   </>
 
 }
 
-export default TicketsList;
+export default OwnerItTicketsList;

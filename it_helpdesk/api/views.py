@@ -3,20 +3,19 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from it_helpdesk.api.serializers import TicketSerializer, TicketListSerializer, \
-    UserSerializer
-from it_helpdesk.tickets.models import Ticket
-from it_helpdesk.users.models import User
+from it_helpdesk.models import Ticket, User
+from it_helpdesk.api.serializers import TicketSerializer, UserSerializer
 
 IT_ROLES = ['IT', 'MG']
 
 
-class TicketsCreateView(generics.ListCreateAPIView):
+class TicketsListCreateView(generics.ListCreateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
+        print('request.data', request.data)
         serializer = TicketSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -26,17 +25,23 @@ class TicketsCreateView(generics.ListCreateAPIView):
         return Response({'Некорректные данные': serializer.errors},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-class TicketsListView(generics.ListCreateAPIView):
-    queryset = Ticket.objects.all()
-    serializer_class = TicketListSerializer
-    permission_classes = (IsAuthenticated,)
-
     def get_queryset(self):
         if self.request.user.role in IT_ROLES:
-            return self.queryset.all().order_by('id')
+            return self.queryset.all().order_by('-id')
         owner_queryset = self.queryset.filter(author=self.request.user)
-        return owner_queryset.order_by('id')
+        return owner_queryset.order_by('-id')
+
+
+# class TicketsListView(generics.ListCreateAPIView):
+#     queryset = Ticket.objects.all()
+#     serializer_class = TicketListSerializer
+#     permission_classes = (IsAuthenticated,)
+#
+#     def get_queryset(self):
+#         if self.request.user.role in IT_ROLES:
+#             return self.queryset.all().order_by('-id')
+#         owner_queryset = self.queryset.filter(author=self.request.user)
+#         return owner_queryset.order_by('-id')
 
 
 class TicketView(generics.RetrieveUpdateDestroyAPIView):
