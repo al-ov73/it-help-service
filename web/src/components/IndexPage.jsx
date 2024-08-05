@@ -7,7 +7,6 @@ import axios from 'axios';
 import routes from '../routes/routes.js';
 import config from '../config/config.js';
 
-import OwnerItTicketsList from './OwnerItTicketsList.jsx';
 import IndexNavbar from "./Navbar.jsx";
 import TicketCreateForm from './TicketCreateForm.jsx';
 
@@ -36,7 +35,6 @@ const IndexPage = () => {
     <ToastContainer/>
     <IndexNavbar/>
     {!isUserIt && <TicketCreateForm/>}
-    {isUserIt && <OwnerItTicketsList/>}
     <TicketsList/>
   </>
 }

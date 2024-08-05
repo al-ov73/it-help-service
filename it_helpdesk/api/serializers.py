@@ -40,6 +40,7 @@ class TicketSerializer(serializers.ModelSerializer):
 
 class TicketListSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
+    assigned = AuthorSerializer(read_only=True)
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 
     class Meta:

@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import config from '../config/config.js';
 import TicketModal from './TicketModal.jsx';
+import OwnerItTicketsList from './OwnerItTicketsList.jsx';
+
 
 const TicketsList = () => {
   const auth = useAuth();
@@ -32,6 +34,8 @@ const TicketsList = () => {
     .catch((e) => console.log('error', e))
   }, [])
 
+  const isUserIt = config.IT_ROLES.includes(currentUser.role)
+
   const currentTickets = tickets;
   useEffect(() => {
     const { tokens } = JSON.parse(localStorage.getItem('user'))
@@ -48,7 +52,7 @@ const TicketsList = () => {
         return navigate('/login');
       }
     })
-  }, [currentTickets, updatedTicket]);
+  }, [updatedTicket]);
 
 
   if (tickets.length === 0) {
@@ -81,6 +85,7 @@ const TicketsList = () => {
   }
 
   return <>
+    {isUserIt && <OwnerItTicketsList/>}
     <Container>
       <Row><h2 className="text-center mb-4">Тикеты</h2></Row>
       <Row >

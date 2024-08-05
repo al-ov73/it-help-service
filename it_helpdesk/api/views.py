@@ -10,12 +10,11 @@ IT_ROLES = ['IT', 'MG']
 
 
 class TicketsListCreateView(generics.ListCreateAPIView):
-    queryset = Ticket.objects.all()
+    queryset = Ticket.objects.select_related("author").select_related("assigned").all().order_by('-id')
     serializer_class = TicketListSerializer
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        print('request.data', request.data)
         serializer = TicketSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -32,20 +31,8 @@ class TicketsListCreateView(generics.ListCreateAPIView):
         return owner_queryset.order_by('-id')
 
 
-# class TicketsListView(generics.ListCreateAPIView):
-#     queryset = Ticket.objects.all()
-#     serializer_class = TicketListSerializer
-#     permission_classes = (IsAuthenticated,)
-#
-#     def get_queryset(self):
-#         if self.request.user.role in IT_ROLES:
-#             return self.queryset.all().order_by('-id')
-#         owner_queryset = self.queryset.filter(author=self.request.user)
-#         return owner_queryset.order_by('-id')
-
-
 class TicketView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Ticket.objects.all()
+    queryset = Ticket.objects.select_related("author").select_related("assigned").all()
     serializer_class = TicketSerializer
     permission_classes = (IsAuthenticated,)
 
