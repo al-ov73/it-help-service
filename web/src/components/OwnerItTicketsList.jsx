@@ -28,32 +28,27 @@ const OwnerItTicketsList = () => {
     .catch((e) => console.log('error', e))
   }, [])
 
+  const currentTickets = tickets;
   useEffect(() => {
-    const getTickets = async () => {
-      const { tokens } = JSON.parse(localStorage.getItem('user'))
-      axios.get(routes.ticketsPath, {
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-        },
-      }).then((response) => setTickets(response.data))
-      .catch((e) => {
-        console.log('ticket list error', e);
-        if (e.response.statusText === 'Unauthorized') {
-          console.log('Unauthorized');
-          auth.logOut();
-          return navigate('/login');
-        }
-      })
-        // .then(() => setTimeout(getTickets, 10000))
-    }
-    getTickets()
-  }, []);
+    const { tokens } = JSON.parse(localStorage.getItem('user'))
+    axios.get(routes.ticketsPath, {
+      headers: {
+        Authorization: `Bearer ${tokens.access}`,
+      },
+    }).then((response) => setTickets(response.data))
+    .catch((e) => {
+      console.log('ticket list error', e);
+      if (e.response.statusText === 'Unauthorized') {
+        console.log('Unauthorized');
+        auth.logOut();
+        return navigate('/login');
+      }
+    })
+  }, [currentTickets]);
 
   if (tickets.length === 0) {
     return 'Тикетов пока нет';
   }
-
-  console.log('tickets', tickets)
 
   const assignHandler = (ticket) => {
     console.log('ticket before', ticket)
@@ -85,7 +80,7 @@ const OwnerItTicketsList = () => {
             </tr>
           </thead>
           <tbody>
-          {tickets
+          {currentTickets
             .filter((ticket) => ticket.assigned && ticket.assigned.username === currentUser.username)
             .map((ticket) => {
               const closeButton = config.IT_ROLES.includes(currentUser.role) && !ticket.assigned ? 

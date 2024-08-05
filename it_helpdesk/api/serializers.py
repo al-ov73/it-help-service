@@ -32,17 +32,17 @@ class AuthorSerializer(serializers.ModelSerializer):
         ]
 
 
-# class TicketSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Ticket
-#         fields = '__all__'
-
-
 class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = '__all__'
+
+
+class TicketListSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 
     class Meta:
         model = Ticket
-        # depth = 1
+        depth = 1
         fields = '__all__'

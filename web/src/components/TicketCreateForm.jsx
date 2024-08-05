@@ -62,7 +62,6 @@ const TicketCreateForm = () => {
   });
 
   return <>
-
   <FormikProvider value={formik}>
   <h2 className="text-center mb-4">Создать тикет</h2>
     <Form onSubmit={formik.handleSubmit} className="justify-content-md-center">

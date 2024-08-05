@@ -4,14 +4,14 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from it_helpdesk.models import Ticket, User
-from it_helpdesk.api.serializers import TicketSerializer, UserSerializer
+from it_helpdesk.api.serializers import TicketSerializer, TicketListSerializer, UserSerializer
 
 IT_ROLES = ['IT', 'MG']
 
 
 class TicketsListCreateView(generics.ListCreateAPIView):
     queryset = Ticket.objects.all()
-    serializer_class = TicketSerializer
+    serializer_class = TicketListSerializer
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
