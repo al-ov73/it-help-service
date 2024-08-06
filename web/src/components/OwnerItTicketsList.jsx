@@ -4,21 +4,19 @@ import routes from '../routes/routes.js';
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import useAuth from '../hooks/index.js';
-import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import config from '../config/config.js';
+import { useSelector } from 'react-redux';
+
 
 const OwnerItTicketsList = () => {
-  const auth = useAuth();
-  const [tickets, setTickets] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
-  const navigate = useNavigate();
 
   const { tokens } = JSON.parse(localStorage.getItem('user'))
   const decoded = jwtDecode(tokens.access);
   const currentUserId = decoded.user_id;
-  
+
+  const tickets = useSelector((state) => state.tickets.tickets);
+
   useEffect(() => {
     axios.get(`${routes.getUsersPath}/${currentUserId}`, {
       headers: {
@@ -28,42 +26,24 @@ const OwnerItTicketsList = () => {
     .catch((e) => console.log('error', e))
   }, [])
 
-  const currentTickets = tickets;
-  useEffect(() => {
-    const { tokens } = JSON.parse(localStorage.getItem('user'))
-    axios.get(routes.ticketsPath, {
-      headers: {
-        Authorization: `Bearer ${tokens.access}`,
-      },
-    }).then((response) => setTickets(response.data))
-    .catch((e) => {
-      console.log('ticket list error', e);
-      if (e.response.statusText === 'Unauthorized') {
-        console.log('Unauthorized');
-        auth.logOut();
-        return navigate('/login');
-      }
-    })
-  }, [currentTickets]);
-
   if (tickets.length === 0) {
     return 'Тикетов пока нет';
   }
 
-  const assignHandler = (ticket) => {
-    console.log('ticket before', ticket)
-    ticket.author = ticket.author.id;
-    ticket.assigned = currentUserId;
-    console.log('ticket after', ticket)
-    axios.put(`${routes.ticketsPath}/${ticket.id}/`, ticket, {
-      headers: {
-        Authorization: `Bearer ${tokens.access}`,
-      }
-    })
-  }
+  // const assignHandler = (ticket) => {
+  //   console.log('ticket before', ticket)
+  //   ticket.author = ticket.author.id;
+  //   ticket.assigned = currentUserId;
+  //   console.log('ticket after', ticket)
+  //   axios.put(`${routes.ticketsPath}/${ticket.id}/`, ticket, {
+  //     headers: {
+  //       Authorization: `Bearer ${tokens.access}`,
+  //     }
+  //   })
+  // }
 
   return <>
-      <Container>
+    {<Container>
       <Row><h2 className="text-center mb-4">Мои тикеты</h2></Row>
       <Row >
         <Table striped bordered hover className="text-center">
@@ -80,12 +60,9 @@ const OwnerItTicketsList = () => {
             </tr>
           </thead>
           <tbody>
-          {currentTickets
+          {tickets
             .filter((ticket) => ticket.assigned && ticket.assigned.username === currentUser.username)
             .map((ticket) => {
-              const closeButton = config.IT_ROLES.includes(currentUser.role) && !ticket.assigned ? 
-              <button onClick={() => assignHandler(ticket)}>Закрыть</button> : 
-              ''
               return <tr key={ticket.id}>
                       <td>{ticket.id}</td>
                       <td>{ticket.title}</td>
@@ -100,7 +77,7 @@ const OwnerItTicketsList = () => {
           </tbody>
         </Table>       
       </Row>
-    </Container>
+    </Container>}
   </>
 
 }

@@ -10,10 +10,13 @@ import { toast } from 'react-toastify';
 import Container from "react-bootstrap/esm/Container";
 import { jwtDecode } from "jwt-decode";
 import SpinnerEl from './Spinner.jsx';
-
+import { getTicketsFromServer } from '../utils/utils.js';
+import { useDispatch } from 'react-redux';
+import { setTickets } from '../slices/ticketsSlice.js';
 
 const TicketCreateForm = () => {
   const [isLoading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleSubmit = async (values) => {
     setLoading(true)
@@ -39,6 +42,8 @@ const TicketCreateForm = () => {
       }
       axios.post(routes.ticketsPath, requestBody, requestHeaders)
         .then((response) => console.log(response.data))
+        .then(() => getTicketsFromServer())
+        .then((tickets) => dispatch(setTickets(tickets)))
         .then(() => setLoading(false))
         .then(() => toast.success('Тикет отправлен!'))
         .catch((e) => {

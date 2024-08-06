@@ -10,12 +10,15 @@ import { jwtDecode } from "jwt-decode";
 import config from '../config/config.js';
 import TicketModal from './TicketModal.jsx';
 import OwnerItTicketsList from './OwnerItTicketsList.jsx';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { setTickets, updateTicket } from '../slices/ticketsSlice.js';
+import { getTicketsFromServer } from '../utils/utils.js';
+import Spinner from "react-bootstrap/Spinner"
 
 const TicketsList = () => {
+  const dispatch = useDispatch();
   const auth = useAuth();
-  const [tickets, setTickets] = useState([]);
-  const [updatedTicket, setUpdatedTicket] = useState({});
+  const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [showTicket, setShowTicket] = useState({});
@@ -35,40 +38,38 @@ const TicketsList = () => {
   }, [])
 
   const isUserIt = config.IT_ROLES.includes(currentUser.role)
+  
+  const tickets = useSelector((state) => state.tickets.tickets);
 
-  const currentTickets = tickets;
   useEffect(() => {
-    const { tokens } = JSON.parse(localStorage.getItem('user'))
-    axios.get(routes.ticketsPath, {
-      headers: {
-        Authorization: `Bearer ${tokens.access}`,
-      },
-    }).then((response) => setTickets(response.data))
-    .catch((e) => {
-      console.log('ticket list error', e);
-      if (e.response.statusText === 'Unauthorized') {
-        console.log('Unauthorized');
-        auth.logOut();
-        return navigate('/login');
-      }
-    })
-  }, [updatedTicket]);
+    getTicketsFromServer()
+      .then((tickets) => dispatch(setTickets(tickets)))
+      .then(() => setLoading(false))
+      .catch((e) => {
+        console.log('ticket list error', e);
+        if (e.response.statusText === 'Unauthorized') {
+          console.log('Unauthorized');
+          auth.logOut();
+          return navigate('/login');
+        }
+      })
+  }, []);
 
-
-  if (tickets.length === 0) {
+  if (tickets.length === 0 && loading === false) {
     return 'Тикетов пока нет';
   }
 
   const assignHandler = (ticket) => {
-    ticket.author = ticket.author.id;
-    ticket.assigned = currentUserId;
-    axios
-    .put(`${routes.ticketsPath}/${ticket.id}/`, ticket, {
+    const updatedTicket = {...ticket}
+    updatedTicket.author = ticket.author.id;
+    updatedTicket.assigned = currentUserId;
+    axios.put(`${routes.ticketsPath}/${updatedTicket.id}/`, updatedTicket, {
       headers: {
         Authorization: `Bearer ${tokens.access}`,
       }
     })
-    .then((response) => setUpdatedTicket(response.data))
+    .then(() => getTicketsFromServer())
+    .then((tickets) => dispatch(setTickets(tickets)))
     .catch((e) => {
       console.log('error', e);
       if (e.response.statusText === 'Unauthorized') {
@@ -86,7 +87,10 @@ const TicketsList = () => {
 
   return <>
     {isUserIt && <OwnerItTicketsList/>}
-    <Container>
+    {loading ? <div className="text-center py-5">
+                  <Spinner animation="border" />
+              </div>  : 
+      <Container>
       <Row><h2 className="text-center mb-4">Тикеты</h2></Row>
       <Row >
         <Table striped bordered hover className="text-center">
@@ -104,7 +108,7 @@ const TicketsList = () => {
             </tr>
           </thead>
           <tbody>
-          {currentTickets.map((ticket) => {
+          {tickets.map((ticket) => {
             const takeButton = config.IT_ROLES.includes(currentUser.role) && !ticket.assigned ? 
                               <button onClick={() => assignHandler(ticket)}>Забираю</button> : 
                               ''
@@ -123,7 +127,7 @@ const TicketsList = () => {
           </tbody>
         </Table>       
       </Row>
-    </Container>
+    </Container>}
     {showModal && <TicketModal ticket={showTicket} show={showModal} onHide={() => setShowModal(false)}/>}
   </>
 
