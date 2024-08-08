@@ -1,0 +1,21 @@
+services:
+  web:
+    build:
+      context: ./web
+    container_name: it_helpdesk-frontend
+    depends_on:
+      - it_helpdesk
+    ports:
+      - 3000:3000
+    command: sh -c 'npm start'
+
+
+  it_helpdesk:
+    build:
+      context: .
+    env_file:
+      - .env
+    container_name: it_helpdesk
+    ports:
+      - 8000:8000
+    command: sh -c 'poetry run gunicorn it_helpdesk.wsgi:application --workers 4 --bind=0.0.0.0:8000'

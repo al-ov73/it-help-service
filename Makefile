@@ -7,3 +7,11 @@ migrate:
 
 superuser:
 	python manage.py createsuperuser
+
+docker-build:
+		docker compose -f docker-compose.yml build
+
+docker-run:
+		docker compose -f docker-compose.yml up
+
+docker: docker-build docker-run
